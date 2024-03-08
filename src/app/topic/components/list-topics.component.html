@@ -1,0 +1,190 @@
+<div class="container">
+  <div class="row justify-content-center h-100" *ngIf="user.role == 'ADMIN'">
+    <div class="col-12">
+      <mat-card class="mt-2">
+        <mat-card-header class="">
+          <mat-card-title>Área Administrativa</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <button type="button" class="btn btn-outline-dark btn-space" (click)="openNewTopic(newTopic)">Nova Pauta</button>
+          <button type="button" class="btn btn-outline-dark" (click)="openNewUser(newUser)">Novo Usuário</button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row justify-content-center h-100">
+    <div class="col-12">
+      <mat-card class="mt-2">
+        <mat-card-header class="">
+          <mat-card-title-group>
+            <mat-card-title>Pautas</mat-card-title>
+            <mat-icon matTooltip="Sair" fontIcon="logout" class="left-align cursor-pointer" (click)="logout()"></mat-icon>
+          </mat-card-title-group>
+        </mat-card-header>
+        <div class="scrollable-list mt-2">
+          <mat-list role="list">
+            <div class="container">
+              <div class="row d-flex justify-content-center m-2" *ngFor="let topic of topics">
+                <mat-card class="col-12 p-2">
+                  <mat-card-header class="header-container">
+                    <mat-icon matTooltip="Visualizar resultados da pauta" fontIcon="info" class="left-align cursor-pointer" (click)="openTopicResults(topic)"></mat-icon>
+                    <div (click)="openTopic(topic)" class="cursor-pointer">
+                      <mat-card-title matTooltip="Votar na pauta"><span class="custom-card-title">{{ topic.title }}</span></mat-card-title>
+                      <mat-card-subtitle>{{ topic.created_at | date:'dd/MM/yyyy HH:mm:ss' }}</mat-card-subtitle>
+                    </div>
+                  </mat-card-header>
+                </mat-card>
+              </div>
+            </div>
+          </mat-list>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modalVotes let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Votação</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close()"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <h3><strong>{{ activeTopic.title }}</strong></h3>
+        <p>{{ activeTopic.description }} </p>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer d-flex justify-content-around">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('N')">Não</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('S')">Sim</button>
+  </div>
+</ng-template>
+
+<ng-template #newTopic let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Nova Pauta</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="newTopicForm">
+      <div class="container mb-3">
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>Titulo</mat-label>
+            <input matInput formControlName="title">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer d-flex">
+    <button type="button" class="btn btn-danger" (click)="modal.close('C')">Cancelar</button>
+    <button type="button" class="btn btn-dark" [disabled]="newTopicForm.invalid"
+      (click)="modal.close('SEND')">Cadastrar</button>
+  </div>
+</ng-template>
+
+<ng-template #newUser let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Novo Usuário</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="newUserForm">
+      <div class="container mb-3">
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>Senha</mat-label>
+            <input type="password" matInput formControlName="password">
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>Confime a Senha</mat-label>
+            <input type="password" matInput formControlName="passwordConfirm">
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer d-flex">
+    <button type="button" class="btn btn-danger" (click)="modal.close('C')">Cancelar</button>
+    <button type="button" class="btn btn-dark" [disabled]="newUserForm.invalid"
+      (click)="modal.close('SEND')">Cadastrar</button>
+  </div>
+</ng-template>
+
+<ng-template #newSession let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Iniciar Sessão</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="newSessionForm">
+      <div class="container mb-3">
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>duração</mat-label>
+            <input matInput formControlName="duration" type="number">
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer d-flex">
+    <button type="button" class="btn btn-danger" (click)="modal.close()">Cancelar</button>
+    <button type="button" class="btn btn-dark" [disabled]="newSessionForm.invalid"
+      (click)="modal.close('SEND')">Iniciar</button>
+  </div>
+</ng-template>
+
+<ng-template #topicResults let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Resultados da Pauta</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <h3><strong>{{ activeTopicResults.title }}</strong></h3>
+      <p>{{ activeTopicResults.description }} </p>
+    </div>
+    <div class="mb-3">
+      <div class="results-align">
+        <strong>Sessões:</strong> {{ activeTopicResults.sessions }}
+        <strong>Sim:</strong> {{ activeTopicResults.votes.yes }}
+        <strong>Não:</strong> {{ activeTopicResults.votes.no }}
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer d-flex justify-content-around">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Fechar</button>
+  </div>
+</ng-template>
